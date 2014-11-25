@@ -6,7 +6,8 @@ var log     = require('../log');
 var LEVEL_INFO      = 'info',
     LEVEL_VERBOSE   = 'verbose',
     LEVEL_DEBUG     = 'debug',
-    LEVEL_ERROR     = 'error';
+    LEVEL_ERROR     = 'error',
+    LEVEL_FATAL     = 'fatal';
 
 exports.route = function(app) {
     app.post('/api/entries', function(req, res) {
@@ -24,7 +25,8 @@ exports.route = function(app) {
                 (typeof message === 'string' || (message instanceof String))) {
                 // Check that level is correct
                 if (level !== LEVEL_INFO && level !== LEVEL_VERBOSE &&
-                    level !== LEVEL_DEBUG && level !== LEVEL_ERROR) {
+                    level !== LEVEL_DEBUG && level !== LEVEL_ERROR &&
+                    level !== LEVEL_FATAL) {
                     return res.status(400).send('Invalid level provided');
                 }
                 // Check the client's ip address

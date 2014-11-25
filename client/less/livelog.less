@@ -1,0 +1,122 @@
+@import "colors";
+@import "variables";
+
+#base #content #livelog {
+    position: absolute;
+    top: @header-height;
+    bottom: @footer-height;
+    left: 0px;
+    right: 0px;
+    overflow: auto;
+    transition: opacity 0.5s;
+
+    #entries {
+        width: 800px;
+        margin: 25px auto;
+        background: white;
+        border-radius: 4px;
+        box-shadow: 0px 1px 5px 0px rgba(0, 0, 0, 0.3);
+
+        .entry {
+            box-sizing: border-box;
+            padding: 15px;
+            font-family: 'Roboto', sans-serif;
+            color: #666;
+            border-bottom: 1px solid @color-background;
+
+            .level {
+                display: inline-block;
+                text-transform: uppercase;
+                font-weight: 700;
+                font-size: 12px;
+
+                &.info {
+                    color: @color-blue;
+                }
+
+                &.verbose {
+                    color: @color-green;
+                }
+
+                &.debug {
+                    color: @color-orange;
+                }
+
+                &.error {
+                    color: @color-red;
+                }
+
+                &.fatal {
+                    color: darken(@color-red, 15%);
+                }
+            }
+
+            .time,
+            .device-id,
+            .ip {
+                display: inline-block;
+                text-transform: uppercase;
+                font-weight: 400;
+                font-size: 12px;
+                margin-left: 20px;
+
+                .fa {
+                    padding-right: 5px;
+                }
+            }
+
+            .tag {
+                margin-top: 10px;
+                margin-bottom: 10px;
+                font-size: 24px;
+                font-weight: 300;
+
+                &.info {
+                    color: @color-blue;
+                }
+
+                &.verbose {
+                    color: @color-green;
+                }
+
+                &.debug {
+                    color: @color-orange;
+                }
+
+                &.error {
+                    color: @color-red;
+                }
+
+                &.fatal {
+                    color: darken(@color-red, 10%);
+                }
+            }
+
+            .message {
+                box-sizing: border-box;
+                width: 100%;
+                background: #f0f0f0;
+                border-radius: 4px;
+                padding: 15px;
+
+                pre {
+                    margin: 0px;
+                }
+            }
+
+            .trace {
+                margin-top: 10px;
+                box-sizing: border-box;
+                width: 100%;
+                background: lighten(@color-red, 50%);
+                border-radius: 4px;
+                padding: 15px;
+
+                pre {
+                    color: @color-red;
+                    margin: 0px;
+                }
+            }
+        }
+    }
+}

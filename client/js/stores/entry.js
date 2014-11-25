@@ -28,7 +28,7 @@ var EntryStore = assign({}, EventEmitter.prototype, {
         this.removeListener(events.NEW_ENTRY, callback);
     },
     emitInitialEntriesLoaded: function() {
-        this.emit(events.INITIAL_ENTRIES_LOADED, state.entries);
+        this.emit(events.INITIAL_ENTRIES_LOADED);
     },
     onInitialEntriesLoaded: function(callback) {
         this.on(events.INITIAL_ENTRIES_LOADED, callback);
@@ -42,11 +42,14 @@ var EntryStore = assign({}, EventEmitter.prototype, {
 EntryDispatcher.register(function(action) {
     switch(action.type) {
         case EntryDispatcher.events.NEW_ENTRY:
-            state.entries.push(action.data);
+            state.entries.unshift(action.data);
             EntryStore.emitNewEntry(action.data);
             return true;
         case EntryDispatcher.events.INITIAL_ENTRIES_LOADED:
-            state.entries.concat(action.data);
+            for (var i = 0; i < action.data.length; i++) {
+                state.entries.push(action.data[i]);
+            }
+
             state.initialEntriesLoaded = true;
             EntryStore.emitInitialEntriesLoaded();
             return true;

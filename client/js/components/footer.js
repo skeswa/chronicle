@@ -27,7 +27,7 @@ var Footer = React.createClass({
     render: function() {
         return (
             <footer className={this.state.ready ? '' : 'hidden'}>
-                <span>Made with <i className="fa fa-heart"></i> in Philadelphia</span>
+                <span>Hosted by Technuf LLC &copy; in Maryland</span>
             </footer>
         );
     }
