@@ -44,7 +44,8 @@ exports.route = function(app) {
                     tag: tag,
                     message: message,
                     trace: trace,
-                    ip: ip
+                    ip: ip,
+                    time: (new Date()).getTime()
                 }, entry = req.models.Entry(state);
                 // Save the new entry
                 entry.save(function(err) {

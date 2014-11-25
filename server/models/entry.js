@@ -15,10 +15,7 @@ module.exports = {
                 message: String,
                 trace: String,
                 ip: String,
-                time: {
-                    type: Number,
-                    'default': (new Date()).getTime()
-                }
+                time: Number
             }));
         }
         return model;
