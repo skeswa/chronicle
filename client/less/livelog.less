@@ -1,0 +1,299 @@
+@import "colors";
+@import "variables";
+
+#base #content #livelog {
+    position: absolute;
+    top: @header-height;
+    bottom: @footer-height;
+    left: 0px;
+    right: 0px;
+    overflow: auto;
+    transition: opacity 0.5s;
+
+    .empty-message {
+        display: block;
+        width: 500px;
+        position: fixed;
+        left: 50%;
+        top: 50%;
+        margin-left: -250px;
+        margin-top: -20px;
+        text-align: center;
+        font-weight: 100;
+        font-size: 24px;
+        letter-spacing: 1px;
+        font-family: 'Roboto', sans-serif;
+        text-shadow: 1px 1px 0px white;
+        color: #666;
+    }
+
+    #filters {
+        position: absolute;
+        top: 25px;
+        left: 25px;
+        background: white;
+        width: 300px;
+        height: 400px;
+        border-radius: 4px;
+        overflow: hidden;
+        box-shadow: 0px 1px 5px 0px rgba(0, 0, 0, 0.3);
+        transition: height 0.25s;
+
+        &.create-new-filter {
+            height: 600px;
+
+            #heading .right button {
+                background: @color-red;
+
+                &:hover {
+                    background: lighten(@color-red, 5%);
+                }
+            }
+
+            #filter-form {
+                top: 45px;
+            }
+
+            #filter-list {
+                top: 245px;
+            }
+        }
+
+        #heading {
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            right: 0px;
+            height: 45px;
+            background: @color-dark-blue;
+            z-index: 300;
+
+            .left {
+                float: left;
+                font-family: 'Montserrat', sans-serif;
+                color: white;
+                text-transform: uppercase;
+                letter-spacing: 1.5px;
+                font-size: 15px;
+                font-weight: 400;
+                padding-top: 13px;
+                padding-left: 15px;
+            }
+
+            .right {
+                float: right;
+                padding-right: 12px;
+                padding-top: 10px;
+
+                button {
+                    background: @color-blue;
+                    padding: 5px 15px;
+                    border-radius: 13px;
+                    border-width: 0px;
+                    outline: 0 none;
+                    color: white;
+                    cursor: pointer;
+                    transition: background 0.5s;
+
+                    &:hover {
+                        background: lighten(@color-blue, 5%);
+                    }
+
+                    i {
+                        font-size: 12px;
+                    }
+                }
+            }
+        }
+
+        #filter-form {
+            position: absolute;
+            top: -155px;
+            left: 0px;
+            right: 0px;
+            height: 200px;
+            box-sizing: border-box;
+            padding: 15px;
+            font-family: 'Roboto', sans-serif;
+            background: @color-blue;
+            transition: top 0.25s;
+            z-index: 200;
+
+            .field-select {
+                display: block;
+                width: 100%;
+            }
+
+            .filter-value {
+                display: block;
+                width: 100%;
+                height: 35px;
+                padding: 6px 12px;
+                font-size: 14px;
+                color: #666666;
+                background-color: white;
+                border: 1px solid #dddddd;
+                border-radius: 4px;
+                box-sizing: border-box;
+                margin: 10px 0px;
+                outline: 0 none;
+
+                &:focus {
+                    border-width: 3px;
+                    padding: 4px 10px;
+                    border-color: @color-blue;
+                }
+            }
+        }
+
+        #filter-list {
+            position: absolute;
+            top: 45px;
+            left: 0px;
+            right: 0px;
+            bottom: 0px;
+            transition: top 0.25s;
+            z-index: 100;
+
+            .empty-message {
+                display: block;
+                width: 180px;
+                position: absolute;
+                left: 50%;
+                top: 50%;
+                margin-left: -90px;
+                margin-top: -30px;
+                text-align: center;
+                font-weight: 100;
+                font-size: 18px;
+                letter-spacing: 1px;
+                font-family: 'Roboto', sans-serif;
+                color: #666;
+            }
+        }
+    }
+
+    #entries-container {
+        position: absolute;
+        top: 0px;
+        left: 325px;
+        right: 0px;
+        bottom: 0px;
+        box-sizing: border-box;
+        padding: 0px 25px;
+        overflow-y: scroll;
+
+        #entries {
+            width: 100%;
+            margin: 25px 0px;
+            background: white;
+            border-radius: 4px;
+            box-shadow: 0px 1px 5px 0px rgba(0, 0, 0, 0.3);
+
+            .entry {
+                box-sizing: border-box;
+                padding: 15px;
+                font-family: 'Roboto', sans-serif;
+                color: #666;
+                border-bottom: 1px solid @color-background;
+
+                .level {
+                    display: inline-block;
+                    text-transform: uppercase;
+                    font-weight: 700;
+                    font-size: 14px;
+
+                    &.info {
+                        color: @color-blue;
+                    }
+
+                    &.verbose {
+                        color: @color-green;
+                    }
+
+                    &.debug {
+                        color: @color-orange;
+                    }
+
+                    &.error {
+                        color: @color-red;
+                    }
+
+                    &.fatal {
+                        color: darken(@color-red, 15%);
+                    }
+                }
+
+                .time,
+                .device-id,
+                .ip,
+                .version {
+                    display: block;
+                    text-transform: uppercase;
+                    font-weight: 400;
+                    font-size: 12px;
+                    margin-left: 20px;
+                    float: right;
+                    position: relative;
+                    top: 3px;
+
+                    .fa {
+                        padding-right: 5px;
+                    }
+                }
+
+                .tag {
+                    margin: 15px 0px;
+                    font-size: 28px;
+                    font-weight: 100;
+
+                    &.info {
+                        color: @color-blue;
+                    }
+
+                    &.verbose {
+                        color: @color-green;
+                    }
+
+                    &.debug {
+                        color: @color-orange;
+                    }
+
+                    &.error {
+                        color: @color-red;
+                    }
+
+                    &.fatal {
+                        color: darken(@color-red, 10%);
+                    }
+                }
+
+                .message {
+                    box-sizing: border-box;
+                    width: 100%;
+                    background: #f0f0f0;
+                    border-radius: 4px;
+                    padding: 15px;
+
+                    pre {
+                        margin: 0px;
+                    }
+                }
+
+                .trace {
+                    margin-top: 10px;
+                    box-sizing: border-box;
+                    width: 100%;
+                    background: lighten(@color-red, 50%);
+                    border-radius: 4px;
+                    padding: 15px;
+
+                    pre {
+                        color: @color-red;
+                        margin: 0px;
+                    }
+                }
+            }
+        }
+    }
+}

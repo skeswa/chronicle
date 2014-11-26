@@ -1,0 +1,158 @@
+@import "fonts";
+@import "colors";
+@import "variables";
+@import "livelog";
+
+#base {
+    header {
+        display: block;
+        position: absolute;
+        top: 0px;
+        left: 0px;
+        right: 0px;
+        height: @header-height;
+        background: @color-dark-blue;
+        text-align: center;
+        transition: top 0.5s;
+        z-index: 300;
+
+        &.hidden {
+            top: -50px;
+        }
+
+        .middle {
+            display: inline-block;
+            height: @header-height;
+            margin: 0 auto;
+            overflow: hidden;
+            padding-left: 6px; // To account for ever-so lobsided navigation
+
+            .nav {
+                overflow: hidden;
+                display: block;
+                float: left;
+                text-align: center;
+                font-family: 'Montserrat', sans-serif;
+                color: white;
+                text-decoration: none;
+                text-transform: uppercase;
+                padding-top: 16px;
+                padding-left: 25px;
+                padding-right: 25px;
+                padding-bottom: 16px;
+                letter-spacing: 1.5px;
+                font-size: 14px;
+                font-weight: 400;
+                opacity: 0.9;
+                transition: opacity 0.2s, padding-bottom 0.2s, border-bottom 0.2s;
+
+                &:hover {
+                    opacity: 1.0;
+                    padding-bottom: 11px;
+                    border-bottom: 5px solid rgba(255, 255, 255, 0.9);
+                }
+
+                &.active {
+                    padding-bottom: 11px;
+                    border-bottom: 5px solid white;
+                    opacity: 1.0;
+                }
+            }
+
+            #logo {
+                overflow: hidden;
+                display: block;
+                float: left;
+                text-align: center;
+                font-family: 'Montserrat', sans-serif;
+                color: white;
+                text-decoration: none;
+                text-transform: uppercase;
+                padding-top: 14px;
+                padding-left: 25px;
+                padding-right: 25px;
+                padding-bottom: 14px;
+                letter-spacing: 2px;
+                font-size: 18px;
+                font-weight: 700;
+                opacity: 0.9;
+                transition: opacity 0.2s, padding-bottom 0.2s, border-bottom 0.2s;
+
+                &:hover {
+                    opacity: 1.0;
+                    text-shadow: 0px 0px 3px rgba(255, 255, 255, 0.2);
+                }
+
+                &.active {
+                    opacity: 1.0;
+                }
+            }
+        }
+
+        #status {
+            position: absolute;
+            top: 11px;
+            right: 15px;
+            padding: 6px 16px;
+            color: @color-dark-blue;
+            background: white;
+            font-family: 'Montserrat', sans-serif;
+            text-transform: uppercase;
+            font-size: 12px;
+            letter-spacing: 1px;
+            border-radius: 17px;
+            transition: background 0.5s, color 0.5s;
+
+            &.not-connected {
+                background: @color-red;
+                color: white;
+            }
+        }
+    }
+
+    #content {
+        display: block;
+        position: absolute;
+        overflow: hidden;
+        left: 0px;
+        right: 0px;
+        bottom: 0px;
+        top: 0px;
+        z-index: 100;
+        background: @color-background;
+    }
+
+    footer {
+        position: absolute;
+        left: 0px;
+        right: 0px;
+        bottom: 0px;
+        color: darken(white, 10%);
+        background: @color-dark-gray;
+        text-align: center;
+        height: @footer-height;
+        transition: bottom 0.5s;
+        z-index: 200;
+
+        &.hidden {
+            bottom: -50px;
+        }
+
+        span {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 300;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            top: 5px;
+
+            i {
+                position: relative;
+                top: 4px;
+                font-size: 14px;
+                padding: 0px 3px;
+            }
+        }
+    }
+}
