@@ -13,7 +13,10 @@ var LiveLog = React.createClass({
             ready: false,
             entries: EntryStore.getEntries(),
             socketConnected: false,
-            creatingNewFilter: false
+            creatingNewFilter: false,
+            newFilterFieldName: 'level',
+            newFilterValue: '',
+            filters: []
         };
     },
     componentDidMount: function() {
@@ -50,9 +53,38 @@ var LiveLog = React.createClass({
             creatingNewFilter: !(this.state.creatingNewFilter)
         });
     },
+    onNewFilterFieldNameChanged: function(event) {
+        this.setState({
+            newFilterFieldName: event.target.value
+        });
+    },
+    onNewFilterValueChanged: function() {
+        this.setState({
+            newFilterValue: event.target.value
+        });
+    },
+    onCreateFilterClicked: function() {
+        if (!this.state.newFilterFieldName || this.state.newFilterFieldName.trim() === '' ||
+            !this.state.newFilterValue || this.state.newFilterValue.trim() === '') {
+            alert('Please make sure that the both the new filter inputs have valid values.');
+        } else {
+            var newFilter = {
+                field: this.state.newFilterFieldName,
+                value: this.state.newFilterValue
+            };
+
+            console.log('newFilter', newFilter);
+            this.state.filters.push(newFilter);
+            this.setState({
+                newFilterFieldName: 'level',
+                newFilterValue: '',
+                creatingNewFilter: false
+            });
+        }
+    },
     render: function() {
         if (this.state.entries.length > 0) {
-            var entryElements = [], entry;
+            var entryElements = [], filterElements = [], entry, filter;
 
             for (var i = 0; i < this.state.entries.length; i++) {
                 entry = this.state.entries[i];
@@ -80,6 +112,16 @@ var LiveLog = React.createClass({
                 );
             }
 
+            for (var i = 0; i < this.state.filters.length; i++) {
+                filter = this.state.filters[i];
+                filterElements.push(
+                    <div className="filter" key={i}>
+                        <div className='field'>{filter.field}</div>
+                        <div className='value'>{filter.value}</div>
+                    </div>
+                );
+            }
+
             return (
                 <div id="livelog" style={{ opacity: this.state.ready ? 1.0 : 0.0 }}>
                     <div id="filters" className={this.state.creatingNewFilter ? 'create-new-filter' : ''}>
@@ -90,7 +132,7 @@ var LiveLog = React.createClass({
                             </div>
                         </div>
                         <div id="filter-form">
-                            <select className="field-select">
+                            <select className="field-select" value={this.state.newFilterFieldName} onChange={this.onNewFilterFieldNameChanged}>
                                 <option value="level">Log Level</option>
                                 <option value="deviceId">Device Id</option>
                                 <option value="tag">Tag</option>
@@ -100,10 +142,12 @@ var LiveLog = React.createClass({
                                 <option value="appName">Application</option>
                                 <option value="appVersion">Version</option>
                             </select>
-                            <input type="text" className="filter-value"/>
+                            <input type="text" className="filter-value" value={this.state.newFilterValue} placeholder="Filter Value" onChange={this.onNewFilterValueChanged}/>
+                            <button className="finish" onClick={this.onCreateFilterClicked}>Add Filter</button>
                         </div>
                         <div id="filter-list">
-                            <div className="empty-message">There are no filters to show.</div>
+                            <div className="empty-message" style={{ display: (this.state.filters.length > 0 ? 'none' : 'block') }}>There are no filters to show.</div>
+                            {filterElements}
                         </div>
                     </div>
                     <div id="entries-container">
