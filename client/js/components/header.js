@@ -38,9 +38,11 @@ var Header = React.createClass({
     render: function() {
         return (
             <header className={this.state.ready ? '' : 'hidden'}>
+                <Link to="/" id="logo">Chronicle</Link>
+
                 <div className="middle">
                     <Link to="livelog" className="nav">Livelog</Link>
-                    <Link to="/" className="nav" id="logo">Chronicle</Link>
+                    <Link to="/" className="nav">Dashboard</Link>
                     <Link to="history" className="nav">History</Link>
                 </div>
                 <div id="status" className={this.state.connected ? '' : 'not-connected'}>{(this.state.connected ? '' : 'not ') + 'connected'}</div>
