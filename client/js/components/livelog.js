@@ -16,7 +16,7 @@ var LiveLog = React.createClass({
             creatingNewFilter: false,
             newFilterFieldName: 'level',
             newFilterValue: '',
-            filters: []
+            filters: Util.storage.load('livelog-filters', [])
         };
     },
     componentDidMount: function() {
@@ -63,6 +63,12 @@ var LiveLog = React.createClass({
             newFilterValue: event.target.value
         });
     },
+    onNewFilterValueKeyPress: function(event) {
+        if (event.keyCode === 13) {
+            // Enter was pressed - submit the form
+            this.onCreateFilterClicked();
+        }
+    },
     onCreateFilterClicked: function() {
         if (!this.state.newFilterFieldName || this.state.newFilterFieldName.trim() === '' ||
             !this.state.newFilterValue || this.state.newFilterValue.trim() === '') {
@@ -73,14 +79,38 @@ var LiveLog = React.createClass({
                 value: this.state.newFilterValue
             };
 
-            console.log('newFilter', newFilter);
             this.state.filters.push(newFilter);
             this.setState({
                 newFilterFieldName: 'level',
                 newFilterValue: '',
                 creatingNewFilter: false
             });
+            // Persist the revised list
+            Util.storage.save('livelog-filters', this.state.filters);
         }
+    },
+    generateFilterDeleter: function(index) {
+        var component = this, filters = this.state.filters;
+        return function() {
+            filters.splice(index, 1);
+            component.setState({
+                filters: filters
+            });
+            // Persist the revised list
+            Util.storage.save('livelog-filters', filters);
+        };
+    },
+    matchesFilter: function(entry) {
+        var filterVal, entryVal;
+        for (var i = 0; i < this.state.filters.length; i++) {
+            filterVal = this.state.filters[i].value;
+            entryVal = entry[this.state.filters[i].field];
+            // The gauntlet
+            if (!entryVal) return false;
+            else if (typeof entryVal !== 'string' && !(entryVal instanceof String)) return false;
+            else if (entryVal.toLowerCase().indexOf(filterVal.toLowerCase()) === -1) return false;
+        }
+        return true;
     },
     render: function() {
         if (this.state.entries.length > 0) {
@@ -88,36 +118,41 @@ var LiveLog = React.createClass({
 
             for (var i = 0; i < this.state.entries.length; i++) {
                 entry = this.state.entries[i];
-                entryElements.push(
-                    <div className="entry" key={i}>
-                        <div className={'level ' + entry.level}>{entry.level}</div>
-                        <div className="time">
-                            <i className="fa fa-calendar-o"></i>&nbsp;<span>{(new Date(entry.time)).toUTCString()}</span>
+                if (this.matchesFilter(entry)) {
+                    entryElements.push(
+                        <div className="entry" key={i}>
+                            <div className={'level ' + entry.level}>{entry.level}</div>
+                            <div className="time">
+                                <i className="fa fa-calendar-o"></i>&nbsp;<span>{(new Date(entry.time)).toUTCString()}</span>
+                            </div>
+                            <div className="device-id">
+                                <i className="fa fa-phone"></i>&nbsp;<span>{entry.deviceId}</span>
+                            </div>
+                            <div className="ip">
+                                <i className="fa fa-globe"></i>&nbsp;<span>{entry.ip}</span>
+                            </div>
+                            <div className="version">
+                                <i className="fa fa-tag"></i>&nbsp;<span>{entry.appName + ' (' + entry.appVersion + ')'}</span>
+                            </div>
+                            <div className={'tag ' + entry.level}>{entry.tag}</div>
+                            <div className="message"><pre>{entry.message}</pre></div>
+                            <div className="trace" style={{ display: (entry.trace ? 'block' : 'none') }}>
+                                <pre>{entry.trace}</pre>
+                            </div>
                         </div>
-                        <div className="device-id">
-                            <i className="fa fa-phone"></i>&nbsp;<span>{entry.deviceId}</span>
-                        </div>
-                        <div className="ip">
-                            <i className="fa fa-globe"></i>&nbsp;<span>{entry.ip}</span>
-                        </div>
-                        <div className="version">
-                            <i className="fa fa-tag"></i>&nbsp;<span>{entry.appName + ' (' + entry.appVersion + ')'}</span>
-                        </div>
-                        <div className={'tag ' + entry.level}>{entry.tag}</div>
-                        <div className="message"><pre>{entry.message}</pre></div>
-                        <div className="trace" style={{ display: (entry.trace ? 'block' : 'none') }}>
-                            <pre>{entry.trace}</pre>
-                        </div>
-                    </div>
-                );
+                    );
+                }
             }
 
             for (var i = 0; i < this.state.filters.length; i++) {
                 filter = this.state.filters[i];
                 filterElements.push(
                     <div className="filter" key={i}>
-                        <div className='field'>{filter.field}</div>
-                        <div className='value'>{filter.value}</div>
+                        <div className="label">Filter Field</div>
+                        <div className="field">{filter.field}</div>
+                        <div className="label">Filter Value</div>
+                        <div className="value">{filter.value}</div>
+                        <button onClick={this.generateFilterDeleter(i)}><i className="fa fa-times"></i></button>
                     </div>
                 );
             }
@@ -142,12 +177,14 @@ var LiveLog = React.createClass({
                                 <option value="appName">Application</option>
                                 <option value="appVersion">Version</option>
                             </select>
-                            <input type="text" className="filter-value" value={this.state.newFilterValue} placeholder="Filter Value" onChange={this.onNewFilterValueChanged}/>
+                            <input type="text" className="filter-value" value={this.state.newFilterValue} placeholder="Filter Value" onChange={this.onNewFilterValueChanged} onKeyDown={this.onNewFilterValueKeyPress} />
                             <button className="finish" onClick={this.onCreateFilterClicked}>Add Filter</button>
                         </div>
                         <div id="filter-list">
                             <div className="empty-message" style={{ display: (this.state.filters.length > 0 ? 'none' : 'block') }}>There are no filters to show.</div>
-                            {filterElements}
+                            <div id="filter-list-wrapper" style={{ display: (this.state.filters.length > 0 ? 'block' : 'none') }}>
+                                {filterElements}
+                            </div>
                         </div>
                     </div>
                     <div id="entries-container">

@@ -72,5 +72,21 @@ module.exports = {
                 })(fonts[i]);
             }
         }
+    },
+    storage: {
+        load: function(key, valueDefault) {
+            if (typeof Storage !== 'undefined') {
+                var valStr = localStorage.getItem(key);
+                return JSON.parse(valStr) || valueDefault;
+            } else {
+                // No local storage support
+                return valueDefault;
+            }
+        },
+        save: function(key, value) {
+            if (typeof Storage !== 'undefined') {
+                localStorage.setItem(key, JSON.stringify(value));
+            }
+        }
     }
 }
