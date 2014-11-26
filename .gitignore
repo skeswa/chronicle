@@ -30,3 +30,4 @@ node_modules
 # Sandile's Customizations
 .DS_Store
 sftp-config.json
+dist/
