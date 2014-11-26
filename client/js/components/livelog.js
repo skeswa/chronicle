@@ -6,7 +6,29 @@ var Util            = require('../util'),
     Actions         = require('../actions'),
     EntryStore      = require('../stores/entry');
 
-var socket;
+function humanizeEntryField(field) {
+    switch (field) {
+        case 'level':
+            return 'Log Level';
+        case 'deviceId':
+            return 'Device Id';
+        case 'tag':
+            return 'Tag';
+        case 'message':
+            return 'Message';
+        case 'trace':
+            return 'Stack Trace';
+        case 'ip':
+            return 'IP Address';
+        case 'appName':
+            return 'Application';
+        case 'appVersion':
+            return 'Application Version';
+    }
+
+    return 'Unknown';
+}
+
 var LiveLog = React.createClass({
     getInitialState: function() {
         return {
@@ -149,7 +171,7 @@ var LiveLog = React.createClass({
                 filterElements.push(
                     <div className="filter" key={i}>
                         <div className="label">Filter Field</div>
-                        <div className="field">{filter.field}</div>
+                        <div className="field">{humanizeEntryField(filter.field)}</div>
                         <div className="label">Filter Value</div>
                         <div className="value">{filter.value}</div>
                         <button onClick={this.generateFilterDeleter(i)}><i className="fa fa-times"></i></button>
