@@ -183,7 +183,7 @@ var LiveLog = React.createClass({
                 <div id="livelog" style={{ opacity: this.state.ready ? 1.0 : 0.0 }}>
                     <div id="filters" className={this.state.creatingNewFilter ? 'create-new-filter' : ''}>
                         <div id="heading">
-                            <div className="left">Filters</div>
+                            <div className="left"><i className="fa fa-filter"></i> Filters</div>
                             <div className="right">
                                 <button onClick={this.onNewFilterClicked}><i className={'fa fa-' + (this.state.creatingNewFilter ? 'times' : 'plus')}></i></button>
                             </div>
