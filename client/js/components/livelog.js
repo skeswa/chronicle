@@ -1,10 +1,13 @@
 /** @jsx React.DOM */
-var React           = require('react'),
-    Router          = require('react-router');
+var React                   = require('react'),
+    ReactAddons             = require('react/addons'),
+    Router                  = require('react-router');
 
-var Util            = require('../util'),
-    Actions         = require('../actions'),
-    EntryStore      = require('../stores/entry');
+var Util                    = require('../util'),
+    Actions                 = require('../actions'),
+    EntryStore              = require('../stores/entry');
+
+var ReactCSSTransitionGroup = ReactAddons.addons.CSSTransitionGroup;
 
 function humanizeEntryField(field) {
     switch (field) {
@@ -211,7 +214,9 @@ var LiveLog = React.createClass({
                     </div>
                     <div id="entries-container">
                         <div id="entries">
-                            {entryElements}
+                            <ReactCSSTransitionGroup transitionName="example">
+                                {entryElements}
+                            </ReactCSSTransitionGroup>
                         </div>
                     </div>
                 </div>

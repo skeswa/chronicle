@@ -65,17 +65,18 @@
                 padding-top: 16px;
                 padding-left: 25px;
                 padding-right: 25px;
-                padding-bottom: 11px;
+                padding-bottom: 16px;
                 letter-spacing: 1.5px;
                 font-size: 14px;
                 font-weight: 400;
                 opacity: 0.9;
                 transition: opacity 0.2s, padding-bottom 0.2s, border-bottom 0.2s;
+                border-bottom: 0px solid @color-blue;
 
                 &:hover {
                     opacity: 1.0;
                     padding-bottom: 11px;
-                    border-bottom: 5px solid rgba(255, 255, 255, 0.9);
+                    border-bottom: 5px solid @color-blue;
                 }
 
                 &.active {
