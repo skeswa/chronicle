@@ -7,7 +7,8 @@ var Util                    = require('../util'),
     Actions                 = require('../actions'),
     EntryStore              = require('../stores/entry');
 
-var ReactCSSTransitionGroup = ReactAddons.addons.CSSTransitionGroup;
+var ReactCSSTransitionGroup = ReactAddons.addons.CSSTransitionGroup,
+	classSet				= ReactAddons.addons.classSet;
 
 function humanizeEntryField(field) {
     switch (field) {
@@ -41,6 +42,7 @@ var LiveLog = React.createClass({
             creatingNewFilter: false,
             newFilterFieldName: 'level',
             newFilterValue: '',
+			filtersVisible: Util.storage.load('livelog-filters', []).length > 0,
             filters: Util.storage.load('livelog-filters', [])
         };
     },
@@ -72,6 +74,21 @@ var LiveLog = React.createClass({
         this.setState({
             entries: EntryStore.getEntries()
         });
+		// Added refreshes for time updates
+		var component = this;
+		var refresh = function() {
+			component.forceUpdate.call(component);
+		};
+
+		Util.time.sequence({
+			1000: refresh,
+			5000: refresh,
+			60000: refresh,
+			1800000: refresh,
+			3600000: refresh,
+			7200000: refresh,
+			86400000: refresh
+		});
     },
     onNewFilterClicked: function() {
         this.setState({
@@ -94,7 +111,17 @@ var LiveLog = React.createClass({
             this.onCreateFilterClicked();
         }
     },
-    onCreateFilterClicked: function() {
+	onShowFilterClicked: function() {
+		this.setState({
+			filtersVisible: true
+		});
+	},
+	onHideFilterClicked: function() {
+		this.setState({
+			filtersVisible: false
+		});
+	},
+	onCreateFilterClicked: function() {
         if (!this.state.newFilterFieldName || this.state.newFilterFieldName.trim() === '' ||
             !this.state.newFilterValue || this.state.newFilterValue.trim() === '') {
             alert('Please make sure that the both the new filter inputs have valid values.');
@@ -140,18 +167,22 @@ var LiveLog = React.createClass({
     render: function() {
         if (this.state.entries.length > 0) {
             var entryElements = [], filterElements = [], entry, filter;
-
+			// Create the array of messages
             for (var i = 0; i < this.state.entries.length; i++) {
                 entry = this.state.entries[i];
                 if (this.matchesFilter(entry)) {
-                    entryElements.push(
-                        <div className="entry" key={i}>
+                    // Format contextual data
+					var time = Util.time.ago(entry.time);
+					var isNew = ((new Date()).getTime() - entry.time) < 5000 && i === 0;
+					// Format the entry
+					entryElements.push(
+                        <div className={'entry' + (isNew ? ' new' : '')} key={i}>
                             <div className={'level ' + entry.level}>{entry.level}</div>
                             <div className="time">
-                                <i className="fa fa-calendar-o"></i>&nbsp;<span>{(new Date(entry.time)).toUTCString()}</span>
+                                <i className="fa fa-clock-o"></i>&nbsp;<span>{time}</span>
                             </div>
                             <div className="device-id">
-                                <i className="fa fa-phone"></i>&nbsp;<span>{entry.deviceId}</span>
+                                <i className="fa fa-bookmark"></i>&nbsp;<span>{entry.deviceId}</span>
                             </div>
                             <div className="ip">
                                 <i className="fa fa-globe"></i>&nbsp;<span>{entry.ip}</span>
@@ -160,7 +191,8 @@ var LiveLog = React.createClass({
                                 <i className="fa fa-tag"></i>&nbsp;<span>{entry.appName + ' (' + entry.appVersion + ')'}</span>
                             </div>
                             <div className={'tag ' + entry.level}>{entry.tag}</div>
-                            <div className="message"><pre>{entry.message}</pre></div>
+                            <div className={'new' + (isNew ? '' : ' hidden')}>New Log Message</div>
+							<div className="message"><pre>{entry.message}</pre></div>
                             <div className="trace" style={{ display: (entry.trace ? 'block' : 'none') }}>
                                 <pre>{entry.trace}</pre>
                             </div>
@@ -168,7 +200,7 @@ var LiveLog = React.createClass({
                     );
                 }
             }
-
+			// The array of filters
             for (var i = 0; i < this.state.filters.length; i++) {
                 filter = this.state.filters[i];
                 filterElements.push(
@@ -184,11 +216,16 @@ var LiveLog = React.createClass({
 
             return (
                 <div id="livelog" style={{ opacity: this.state.ready ? 1.0 : 0.0 }}>
-                    <div id="filters" className={this.state.creatingNewFilter ? 'create-new-filter' : ''}>
+					<div id="show-filters-button" className={this.state.filtersVisible ? 'hidden' : ''} onClick={this.onShowFilterClicked}><i className={'fa fa-filter'}></i></div>
+                    <div id="filters" className={classSet({
+							'create-new-filter': this.state.creatingNewFilter,
+							'hidden': !this.state.filtersVisible
+						})}>
                         <div id="heading">
                             <div className="left"><i className="fa fa-filter"></i> Filters</div>
                             <div className="right">
-                                <button onClick={this.onNewFilterClicked}><i className={'fa fa-' + (this.state.creatingNewFilter ? 'times' : 'plus')}></i></button>
+                                <button onClick={this.onHideFilterClicked} className="dark"><i className="fa fa-arrow-left"></i></button>
+                                <button onClick={this.onNewFilterClicked} className="blue"><i className={'fa fa-' + (this.state.creatingNewFilter ? 'times' : 'plus')}></i></button>
                             </div>
                         </div>
                         <div id="filter-form">
@@ -212,7 +249,7 @@ var LiveLog = React.createClass({
                             </div>
                         </div>
                     </div>
-                    <div id="entries-container">
+                    <div id="entries-container" className={this.state.filtersVisible ? '' : 'expanded'}>
                         <div id="entries">
                             <ReactCSSTransitionGroup transitionName="example">
                                 {entryElements}

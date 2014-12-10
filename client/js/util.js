@@ -4,7 +4,26 @@ module.exports = {
             for (var split in splits) {
                 setTimeout(splits[split], split);
             }
-        }
+        },
+		ago: function(millis) {
+			var deltaMillis = (new Date()).getTime() - millis;	
+			if (deltaMillis < 60001) {
+				return 'a few seconds ago';
+			} else if (deltaMillis < 600001) {
+				return 'a few minutes ago';
+			} else if (deltaMillis < 1800001) {
+				return 'a little while ago';
+			} else if (deltaMillis < 3600001) {
+				return 'almost an hour ago';
+			} else if (deltaMillis < 7200001) {
+				return 'a couple hours ago';
+			} else if (deltaMillis < 8640001) {
+				return 'a day ago';
+			} else {
+				var tmpDate = new Date(millis);
+				return tmpDate.toString().replace(/\sGMT(.{1,})$/i, '');		
+			}
+		}
     },
     assets: {
         waitForImages: function(images, done) {

@@ -27,6 +27,31 @@
         color: #666;
     }
 
+	#show-filters-button {
+		box-sizing: border-box;
+		position: absolute;
+		margin-left: 0px;
+		top: 25px;
+		width: 50px;
+		height: 50px;
+		padding: 17px;
+		color: white;
+		background: @color-green;
+		border-top-right-radius: 4px;
+		border-bottom-right-radius: 4px;
+		box-shadow: 0px 1px 5px 0px rgba(0, 0, 0, 0.3);
+		cursor: pointer;
+		transition: background 0.25s, margin-left 0.5s;
+
+		&:hover {
+			background: lighten(@color-green, 5%);
+		}
+	
+		&.hidden{
+			margin-left: -50px;
+		}
+	}
+
     #filters {
         position: absolute;
         top: 25px;
@@ -37,7 +62,11 @@
         border-radius: 4px;
         overflow: hidden;
         box-shadow: 0px 1px 5px 0px rgba(0, 0, 0, 0.3);
-        transition: height 0.25s;
+        transition: left 0.5s, height 0.25s;
+	
+		&.hidden {
+			left: -300px;
+		}
 
         &.create-new-filter {
             height: 550px;
@@ -86,7 +115,6 @@
                 padding-top: 10px;
 
                 button {
-                    background: @color-blue;
                     padding: 5px 15px;
                     border-radius: 13px;
                     border-width: 0px;
@@ -94,10 +122,23 @@
                     color: white;
                     cursor: pointer;
                     transition: background 0.5s;
+					margin-left: 8px;
+					
+					&.blue {
+						background: @color-blue;
+						
+						&:hover {
+							background: lighten(@color-blue, 5%);
+						}
+					}
 
-                    &:hover {
-                        background: lighten(@color-blue, 5%);
-                    }
+					&.dark {
+						background: darken(@color-blue, 20%);
+
+						&:hover {
+							background: @color-blue;
+						}
+					}
 
                     i {
                         font-size: 12px;
@@ -250,8 +291,13 @@
         box-sizing: border-box;
         padding: 0px 25px;
         overflow-y: scroll;
+		transition: left 0.5s;
 
-        #entries {
+		&.expanded {
+			left: 55px;
+		}
+	
+		#entries {
             width: 100%;
             margin: 25px 0px;
             background: white;
@@ -264,8 +310,8 @@
                 font-family: 'Roboto', sans-serif;
                 color: #666;
                 border-bottom: 1px solid @color-background;
-
-                .level {
+                
+				.level {
                     display: inline-block;
                     text-transform: uppercase;
                     font-weight: 700;
@@ -298,10 +344,11 @@
                 .version {
                     display: block;
                     text-transform: uppercase;
-                    font-weight: 400;
+                    font-weight: 700;
                     font-size: 12px;
                     margin-left: 20px;
                     float: right;
+					letter-spacing: 0.2px;
                     position: relative;
                     top: 3px;
 
@@ -335,6 +382,31 @@
                         color: darken(@color-red, 10%);
                     }
                 }
+
+				.new {
+					width: 100%;
+					box-sizing: border-box;
+					padding: 10px;
+					text-align: center;
+					font-family: 'Montserrat', sans-serif;
+					text-transform: uppercase;
+					letter-spacing: 1px;
+					font-size: 12px;
+					border-radius: 4px;
+					background: @color-green;
+					margin-bottom: 10px;
+					color: white;
+					max-height: 100px;
+					opacity: 1.0;
+					transition: all 0.5s;
+					
+					&.hidden {
+						max-height: 0px;
+						opacity: 0;
+						padding: 0px;
+						margin: 0px;
+					}
+				}
 
                 .message {
                     box-sizing: border-box;
