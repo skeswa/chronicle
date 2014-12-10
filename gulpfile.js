@@ -88,13 +88,19 @@ gulp.task('fonts', function() {
         .pipe(gulp.dest(path.join('client', 'dist', 'fonts')));
 });
 
+// Move the vendor to dist
+gulp.task('vendor', function() {
+    gulp.src('./client/vendor/**/*')
+        .pipe(gulp.dest(path.join('client', 'dist', 'vendor')));
+});
+
 // Clears all compiled client code
 gulp.task('clean', function() {
     clean.sync(path.join(__dirname, 'client', 'dist'));
 });
 
 // Watches changes to the client code
-gulp.task('watch', ['clean', 'less', 'fonts', 'pages', 'watchify'], function() {
+gulp.task('watch', ['clean', 'less', 'fonts', 'vendor', 'pages', 'watchify'], function() {
     gulp.watch('client/pages/*.html', ['pages']);
     gulp.watch('client/less/**/*.less', ['less']);
     gulp.watch('client/img/**/*', ['images']);
@@ -115,4 +121,4 @@ gulp.task('dev', ['watch'], function() {
 });
 
 // Run all compilation tasks
-gulp.task('default', ['clean', 'less', 'fonts', 'pages', 'browserify']);
+gulp.task('default', ['clean', 'less', 'fonts', 'vendor', 'pages', 'browserify']);
