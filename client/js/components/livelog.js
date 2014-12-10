@@ -178,9 +178,7 @@ var LiveLog = React.createClass({
 					entryElements.push(
                         <div className={'entry' + (isNew ? ' new' : '')} key={i}>
                             <div className={'level ' + entry.level}>{entry.level}</div>
-                            <div className="time">
-                                <i className="fa fa-clock-o"></i>&nbsp;<span>{time}</span>
-                            </div>
+                            <div className="time"><span>{time}</span></div>
                             <div className="device-id">
                                 <i className="fa fa-bookmark"></i>&nbsp;<span>{entry.deviceId}</span>
                             </div>
