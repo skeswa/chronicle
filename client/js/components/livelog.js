@@ -5,7 +5,8 @@ var React                   = require('react'),
 
 var Util                    = require('../util'),
     Actions                 = require('../actions'),
-    EntryStore              = require('../stores/entry');
+    EntryStore              = require('../stores/entry'),
+	Dropdown    			= require('./dropdown');;
 
 var ReactCSSTransitionGroup = ReactAddons.addons.CSSTransitionGroup,
 	classSet				= ReactAddons.addons.classSet;
@@ -95,12 +96,12 @@ var LiveLog = React.createClass({
             creatingNewFilter: !(this.state.creatingNewFilter)
         });
     },
-    onNewFilterFieldNameChanged: function(event) {
+    onNewFilterFieldNameChanged: function(value) {
         this.setState({
-            newFilterFieldName: event.target.value
+            newFilterFieldName: value
         });
     },
-    onNewFilterValueChanged: function() {
+    onNewFilterValueChanged: function(event) {
         this.setState({
             newFilterValue: event.target.value
         });
@@ -203,9 +204,7 @@ var LiveLog = React.createClass({
                 filter = this.state.filters[i];
                 filterElements.push(
                     <div className="filter" key={i}>
-                        <div className="label">Filter Field</div>
-                        <div className="field">{humanizeEntryField(filter.field)}</div>
-                        <div className="label">Filter Value</div>
+                        <div className="label">{humanizeEntryField(filter.field)}</div>
                         <div className="value">{filter.value}</div>
                         <button onClick={this.generateFilterDeleter(i)}><i className="fa fa-times"></i></button>
                     </div>
@@ -227,16 +226,21 @@ var LiveLog = React.createClass({
                             </div>
                         </div>
                         <div id="filter-form">
-                            <select className="field-select" value={this.state.newFilterFieldName} onChange={this.onNewFilterFieldNameChanged}>
-                                <option value="level">Log Level</option>
-                                <option value="deviceId">Device Id</option>
-                                <option value="tag">Tag</option>
-                                <option value="message">Message</option>
-                                <option value="trace">Stack Trace</option>
-                                <option value="ip">IP Address</option>
-                                <option value="appName">Application</option>
-                                <option value="appVersion">Version</option>
-                            </select>
+                            <Dropdown
+								map={{
+									level: 'Log Level',
+									deviceId: 'Device Id',
+									tag: 'Tag',
+									message: 'Message',
+									trace: 'Stack Trace',
+									ip: 'IP Address',
+									appName: 'Application',
+									appVersion: 'Version'
+								}}
+								nullable={false}
+								value={this.state.newFilterFieldName}
+								onChange={this.onNewFilterFieldNameChanged}
+								disabled={this.state.waiting} />
                             <input type="text" className="filter-value" value={this.state.newFilterValue} placeholder="Filter Value" onChange={this.onNewFilterValueChanged} onKeyDown={this.onNewFilterValueKeyPress} />
                             <button className="finish" onClick={this.onCreateFilterClicked}>Add Filter</button>
                         </div>

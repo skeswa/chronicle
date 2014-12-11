@@ -1,0 +1,141 @@
+@import "./colors";
+
+/*********************** GENERIC MIXINS **********************/
+
+.mixin-heading {
+    font-family: 'Montserrat', sans-serif;
+    text-transform: uppercase;
+    font-weight: 700;
+}
+
+.mixin-paragraph {
+    font-family: 'Roboto', sans-serif;
+    font-size: 12px;
+    color: #777777;
+}
+
+.mixin-button {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 14px;
+    color: white;
+    cursor: pointer;
+    text-decoration: none;
+    border-radius: 4px;
+    text-transform: uppercase;
+    display: block;
+    width: 100%;
+    padding: 10px 0px;
+    letter-spacing: 1px;
+    border: none;
+    outline: 0 none;
+    margin-top: 20px;
+    transition: background-color 0.2s;
+}
+
+/*********************** LAYOUT MIXINS ***********************/
+
+.mixin-page {
+    position: absolute;
+    top: 0px;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+    font-size: 0; // To counteract the centering jank
+    text-align: center;
+}
+
+/************************ CARD MIXINS ************************/
+
+.mixin-card {
+    background: white;
+    border-radius: 4px;
+    box-shadow: 0px 1px 5px 0px rgba(0, 0, 0, 0.3);
+}
+
+.mixin-card-wrapper {
+    box-sizing: border-box;
+    padding: 20px;
+}
+
+.mixin-card-heading {
+    .mixin-heading;
+
+    color: @color-primary;
+    text-align: center;
+}
+
+.mixin-card-divider {
+    width: 100%;
+    border-top: 1px solid #dddddd;
+    height: 0px;
+}
+
+.mixin-valign-shim {
+    content: '';
+    display: inline-block;
+    height: 100%;
+    vertical-align: middle;
+    margin-right: -0.25em;
+}
+
+.mixin-valign-object {
+    display: inline-block;
+    vertical-align: middle;
+    font-size: 12px;
+}
+
+/************************ FORM MIXINS ************************/
+
+.mixin-form-field-group {
+    display: inline-block;
+    box-sizing: border-box;
+    vertical-align: top;
+    width: 50%;
+    padding: 10px;
+}
+
+.mixin-form-label {
+    .mixin-paragraph;
+
+    letter-spacing: 1px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.mixin-form-textbox {
+    display: block;
+    width: 100%;
+    height: 35px;
+    padding: 6px 12px;
+    font-size: 14px;
+    color: #666666;
+    background-color: white;
+    border: 1px solid #dddddd;
+    border-radius: 4px;
+    box-sizing: border-box;
+    margin: 10px 0px;
+    outline: 0 none;
+}
+
+.mixin-form-textbox-focused {
+    border-width: 3px;
+    padding: 4px 10px;
+    border-color: @color-blue;
+}
+
+.mixin-form-flash {
+    .mixin-paragraph;
+
+    width: 100%;
+    font-size: 12px;
+    color: @color-primary;
+    font-weight: 400;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    text-align: center;
+    box-sizing: border-box;
+    background-color: lighten(@color-primary, 60%);
+    border: 2px solid @color-primary;
+    border-radius: 4px;
+    padding: 10px;
+}

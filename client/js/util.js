@@ -25,6 +25,16 @@ module.exports = {
 			}
 		}
     },
+    dom: {
+        isDescendant: function(parent, child) {
+            var node = child.parentNode;
+            while (node != null) {
+                if (node == parent) return true;
+                node = node.parentNode;
+            }
+            return false;
+        }
+    },
     assets: {
         waitForImages: function(images, done) {
             var img, count = 0, callback = function() {
@@ -106,6 +116,24 @@ module.exports = {
             if (typeof Storage !== 'undefined') {
                 localStorage.setItem(key, JSON.stringify(value));
             }
+        }
+    },
+    events: {
+        once: function (el, type, callback) {
+            var typeArray = type.split(' ');
+
+            for (var i = typeArray.length - 1; i >= 0; i--) {
+                el.addEventListener(typeArray[i], function(e) {
+                    e.target.removeEventListener(e.type, arguments.callee);
+                    return callback(e);
+                });
+            }
+        },
+        on: function(el, type, callback, capture) {
+            el.addEventListener(type, callback, capture || false);
+        },
+        off: function(el, type, callback, capture) {
+            el.removeEventListener(type, callback, capture || false);
         }
     }
 }

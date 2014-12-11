@@ -45,7 +45,12 @@ var Header = React.createClass({
                     <Link to="/" className="nav">Dashboard</Link>
                     <Link to="history" className="nav">History</Link>
                 </div>
-                <div id="status" className={this.state.connected ? '' : 'not-connected'}>{(this.state.connected ? '' : 'not ') + 'connected'}</div>
+                
+				<div id="status" className={this.state.connected ? '' : 'not-connected'}>
+					<i className={'fa fa-check' + (this.state.connected ? ' visible' : '')}/>
+					<i className={'fa fa-plug' + (this.state.connected ? '' : ' visible')}/>
+					<span className="message">{(this.state.connected ? '' : 'not ') + 'connected'}</span>
+				</div>
             </header>
         );
     }

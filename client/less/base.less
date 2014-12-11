@@ -25,13 +25,13 @@
             display: block;
             position: absolute;
             left: 25px;
-            top: 14px;
+            top: 16px;
             font-family: 'Montserrat', sans-serif;
             color: white;
             text-decoration: none;
             text-transform: uppercase;
             letter-spacing: 2px;
-            font-size: 18px;
+            font-size: 16px;
             font-weight: 700;
             opacity: 0.9;
             transition: opacity 0.2s, padding-bottom 0.2s, border-bottom 0.2s;
@@ -62,12 +62,12 @@
                 color: white;
                 text-decoration: none;
                 text-transform: uppercase;
-                padding-top: 16px;
+                padding-top: 18px;
                 padding-left: 25px;
                 padding-right: 25px;
-                padding-bottom: 16px;
+                padding-bottom: 18px;
                 letter-spacing: 1.5px;
-                font-size: 14px;
+                font-size: 12px;
                 font-weight: 400;
                 opacity: 0.9;
                 transition: opacity 0.2s, padding-bottom 0.2s, border-bottom 0.2s;
@@ -75,12 +75,12 @@
 
                 &:hover {
                     opacity: 1.0;
-                    padding-bottom: 11px;
+                    padding-bottom: 12px;
                     border-bottom: 5px solid @color-blue;
                 }
 
                 &.active {
-                    padding-bottom: 11px;
+                    padding-bottom: 12px;
                     border-bottom: 5px solid white;
                     opacity: 1.0;
                 }
@@ -93,7 +93,7 @@
             right: 15px;
             padding: 6px 16px;
             color: white;
-            background: @color-green;
+            background: @color-blue;
             font-family: 'Montserrat', sans-serif;
             text-transform: uppercase;
             font-size: 12px;
@@ -105,6 +105,33 @@
                 background: @color-red;
                 color: white;
             }
+
+			&:hover {
+				.fa {
+					margin-right: 8px;
+				}
+
+				.message {
+					display: inline-block;
+				}
+			}
+
+			.fa {
+				vertical-align: middle;
+				margin-right: 0px;
+				display: none;
+
+				&.visible {
+					display: inline-block;
+				}
+			}
+
+			.message {
+				vertical-align: middle;
+				overflow: hidden;
+				display: none;
+				cursor: default;
+			}
         }
     }
 
