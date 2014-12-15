@@ -3,8 +3,7 @@ var React   = require('react'),
     Router  = require('react-router');
 
 // React-router variables
-var Routes          = Router.Routes,
-    Route           = Router.Route,
+var Route           = Router.Route,
     DefaultRoute    = Router.DefaultRoute,
     NotFoundRoute   = Router.NotFoundRoute;
 
@@ -18,15 +17,15 @@ var Base        = require('./components/base'),
 
 // Routes representing the frontend
 var sitemap = (
-    <Routes location="history">
-        <Route name="public" path="/" handler={Base}>
-            <Route name="livelog" handler={LiveLog}/>
-            <Route name="history" handler={History}/>
-            <DefaultRoute handler={Dashboard}/>
-        </Route>
-        <NotFoundRoute handler={NotFound}/>
-    </Routes>
+	<Route name="public" path="/" handler={Base}>
+		<Route name="livelog" handler={LiveLog}/>
+		<Route name="history" handler={History}/>
+		<DefaultRoute handler={Dashboard}/>
+		<NotFoundRoute handler={NotFound}/>
+	</Route>
 );
 
 // Bind the routes to the DOM
-React.renderComponent(sitemap, document.body);
+Router.run(sitemap, Router.HistoryLocation, function (Handler) {
+  React.render(<Handler/>, document.body);
+});

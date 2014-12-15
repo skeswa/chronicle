@@ -1,11 +1,14 @@
 /** @jsx React.DOM */
-var React           = require('react');
+var React           = require('react'),
+    Router  		= require('react-router');
 
 var Actions         = require('../actions'),
     EntryService    = require('../services/entry'),
     EntryStore      = require('../stores/entry')
     Header          = require('./header'),
     Footer          = require('./footer');
+
+var RouteHandler	= Router.RouteHandler;
 
 var BasePage = React.createClass({
     componentDidMount: function() {
@@ -24,7 +27,7 @@ var BasePage = React.createClass({
             <div id="base">
                 <Header/>
                 <div id="content">
-                    <this.props.activeRouteHandler/>
+                    <RouteHandler/>
                 </div>
                 <Footer/>
             </div>
