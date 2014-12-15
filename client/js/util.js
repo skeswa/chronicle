@@ -1,3 +1,5 @@
+var TIMEDATE_REGEX = /(\w+)\s(\w+)\s(\d+)\s(\d+)\s(\d+):(\d+):(\d+)/;
+
 module.exports = {
     time: {
         sequence: function(splits) {
@@ -23,6 +25,28 @@ module.exports = {
 				var tmpDate = new Date(millis);
 				return tmpDate.toString().replace(/\sGMT(.{1,})$/i, '');		
 			}
+		},
+		toString: function(millis) {
+			var dateString = (new Date(millis)).toString().replace(/\sGMT(.{1,})$/i, ''),
+				match = dateString.match(TIMEDATE_REGEX),
+				month = match[2],
+				day = match[3],
+				year = match[4],
+				hour = parseInt(match[5]),
+				minutes = match[6],
+				seconds = match[7];
+			
+			return {
+				date: [
+					month,
+					day + ', ',
+					year
+				].join(' '),
+				time: [
+					(hour > 12 ? (hour - 12) : hour) + ':' + minutes + ':' + seconds,
+					(hour >= 12 ? 'PM' : 'AM')
+				].join(' ')
+			};
 		}
     },
     dom: {

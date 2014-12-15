@@ -7,25 +7,8 @@
     bottom: @footer-height;
     left: 0px;
     right: 0px;
-    overflow: auto;
+    overflow: hidden;
     transition: opacity 0.5s;
-
-    .empty-message {
-        display: block;
-        width: 500px;
-        position: fixed;
-        left: 50%;
-        top: 50%;
-        margin-left: -250px;
-        margin-top: -20px;
-        text-align: center;
-        font-weight: 100;
-        font-size: 24px;
-        letter-spacing: 1px;
-        font-family: 'Roboto', sans-serif;
-        text-shadow: 1px 1px 0px white;
-        color: #666;
-    }
 
 	#show-filters-button {
 		box-sizing: border-box;
@@ -247,39 +230,91 @@
                     font-family: 'Roboto', sans-serif;
                     border-bottom: 1px solid @color-background;
 
-                    .label {
+                    &.disabled {
+						.label,
+						.value	{
+							cursor: default;
+							opacity: 0.5;
+						}
+
+						.disable-button {
+							color: @color-green;
+						}
+					}
+
+					.label {
                         text-transform: uppercase;
                         margin: 5px 0px;
                         letter-spacing: 1px;
                         font-weight: 700;
                         font-size: 12px;
-                        color: #888888;
+                        color: #777777;
                     }
+
+					.label,
+					.value {
+						transition: opacity 0.25s;
+					}
 
                     button {
                         position: absolute;
                         right: 12px;
                         top: 50%;
-                        width: 40px;
-                        height: 40px;
-                        margin-top: -20px;
+                        width: 20px;
+                        height: 20px;
                         background: transparent;
                         border-width: 0px;
                         outline: 0 none;
                         color: #666666;
                         cursor: pointer;
+						padding: 0px;
+                        
+						&.delete-button {
+							margin-top: -22px;
+							color: @color-red;
+						}
 
-                        &:hover {
-                            color: @color-red;
-                        }
+						&.disable-button {
+							margin-top: 3px;	
+							color: #666666;
+
+							i {
+								font-size: 14px;
+							}
+						}
 
                         i {
-                            font-size: 18px;
+                            font-size: 16px;
                         }
                     }
                 }
             }
         }
+    }
+
+    .empty-message {
+        display: block;
+        position: absolute;
+        left: 325px;
+        right: 0px;
+        top: 50%;
+		margin-top: -16px;
+        text-align: center;
+        font-weight: 100;
+        font-size: 24px;
+        letter-spacing: 1px;
+        font-family: 'Roboto', sans-serif;
+        text-shadow: 1px 1px 0px white;
+        color: #666;
+        transition: left 0.5s;
+
+		&.hidden {
+			display: none;
+		}
+
+		&.expanded {
+			left: 0px;
+		}
     }
 
     #entries-container {
@@ -295,6 +330,10 @@
 
 		&.expanded {
 			left: 55px;
+		}
+
+		&.hidden {
+			display: none;
 		}
 	
 		#entries {
@@ -339,7 +378,8 @@
                 }
 
                 .time,
-                .device-id,
+                .date,
+				.device-id,
                 .ip,
                 .version {
                     display: block;
@@ -357,9 +397,14 @@
                     }
                 }
 
+				.date {
+					margin-left: 25px;
+					font-weight: 700;
+				}
+
 				.time {
 					font-weight: 700;
-					margin-left: 25px;
+					margin-left: 10px;
 				}
 
                 .tag {

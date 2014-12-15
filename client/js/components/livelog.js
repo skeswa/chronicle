@@ -78,17 +78,13 @@ var LiveLog = React.createClass({
 		// Added refreshes for time updates
 		var component = this;
 		var refresh = function() {
-			component.forceUpdate.call(component);
+			if (component.isMounted()) {
+				component.forceUpdate.call(component);
+			}
 		};
-
+		// Timer for the "new" indicator
 		Util.time.sequence({
-			1000: refresh,
-			5000: refresh,
-			60000: refresh,
-			1800000: refresh,
-			3600000: refresh,
-			7200000: refresh,
-			86400000: refresh
+			6000: refresh,
 		});
     },
     onNewFilterClicked: function() {
@@ -153,120 +149,132 @@ var LiveLog = React.createClass({
             Util.storage.save('livelog-filters', filters);
         };
     },
-    matchesFilter: function(entry) {
+    generateFilterDisabler: function(index) {
+        var component = this, filters = this.state.filters;
+        return function() {
+            if (filters[index].disabled) filters[index].disabled = false;
+			else filters[index].disabled = true;
+
+            component.setState({
+                filters: filters
+            });
+            // Persist the revised list
+            Util.storage.save('livelog-filters', filters);
+        };
+	},
+	matchesFilters: function(entry) {
         var filterVal, entryVal;
         for (var i = 0; i < this.state.filters.length; i++) {
-            filterVal = this.state.filters[i].value;
-            entryVal = entry[this.state.filters[i].field];
-            // The gauntlet
-            if (!entryVal) return false;
-            else if (typeof entryVal !== 'string' && !(entryVal instanceof String)) return false;
-            else if (entryVal.toLowerCase().indexOf(filterVal.toLowerCase()) === -1) return false;
-        }
+            if (!(this.state.filters[i].disabled)) {
+				filterVal = this.state.filters[i].value;
+            	entryVal = entry[this.state.filters[i].field];
+            	// The gauntlet
+            	if (!entryVal) return false;
+            	else if (typeof entryVal !== 'string' && !(entryVal instanceof String)) return false;
+            	else if (entryVal.toLowerCase().indexOf(filterVal.toLowerCase()) === -1) return false;
+        	}
+		}
         return true;
     },
     render: function() {
-        if (this.state.entries.length > 0) {
-            var entryElements = [], filterElements = [], entry, filter;
-			// Create the array of messages
-            for (var i = 0; i < this.state.entries.length; i++) {
-                entry = this.state.entries[i];
-                if (this.matchesFilter(entry)) {
-                    // Format contextual data
-					var time = Util.time.ago(entry.time);
-					var isNew = ((new Date()).getTime() - entry.time) < 5000 && i === 0;
-					// Format the entry
-					entryElements.push(
-                        <div className={'entry' + (isNew ? ' new' : '')} key={i}>
-                            <div className={'level ' + entry.level}>{entry.level}</div>
-                            <div className="time"><span>{time}</span></div>
-                            <div className="device-id">
-                                <i className="fa fa-bookmark"></i>&nbsp;<span>{entry.deviceId}</span>
-                            </div>
-                            <div className="ip">
-                                <i className="fa fa-globe"></i>&nbsp;<span>{entry.ip}</span>
-                            </div>
-                            <div className="version">
-                                <i className="fa fa-tag"></i>&nbsp;<span>{entry.appName + ' (' + entry.appVersion + ')'}</span>
-                            </div>
-                            <div className={'tag ' + entry.level}>{entry.tag}</div>
-                            <div className={'new' + (isNew ? '' : ' hidden')}>New Log Message</div>
-							<div className="message"><pre>{entry.message}</pre></div>
-                            <div className="trace" style={{ display: (entry.trace ? 'block' : 'none') }}>
-                                <pre>{entry.trace}</pre>
-                            </div>
-                        </div>
-                    );
-                }
-            }
-			// The array of filters
-            for (var i = 0; i < this.state.filters.length; i++) {
-                filter = this.state.filters[i];
-                filterElements.push(
-                    <div className="filter" key={i}>
-                        <div className="label">{humanizeEntryField(filter.field)}</div>
-                        <div className="value">{filter.value}</div>
-                        <button onClick={this.generateFilterDeleter(i)}><i className="fa fa-times"></i></button>
-                    </div>
-                );
-            }
+		var entryElements = [], filterElements = [], entry, filter;
+		// Create the array of messages
+		for (var i = 0; i < this.state.entries.length; i++) {
+			entry = this.state.entries[i];
+			if (this.matchesFilters(entry)) {
+				// Format contextual data
+				var timeDate = Util.time.toString(entry.time);
+				var isNew = ((new Date()).getTime() - entry.time) < 5000 && i === 0;
+				// Format the entry
+				entryElements.push(
+					<div className={'entry' + (isNew ? ' new' : '')} key={i}>
+						<div className={'level ' + entry.level}>{entry.level}</div>
+						<div className="time">{timeDate.time}</div>
+						<div className="date">{timeDate.date}</div>
+						<div className="device-id">
+							<i className="fa fa-bookmark"></i>&nbsp;<span>{entry.deviceId}</span>
+						</div>
+						<div className="ip">
+							<i className="fa fa-globe"></i>&nbsp;<span>{entry.ip}</span>
+						</div>
+						<div className="version">
+							<i className="fa fa-tag"></i>&nbsp;<span>{entry.appName + ' (' + entry.appVersion + ')'}</span>
+						</div>
+						<div className={'tag ' + entry.level}>{entry.tag}</div>
+						<div className={'new' + (isNew ? '' : ' hidden')}>New Log Message</div>
+						<div className="message"><pre>{entry.message}</pre></div>
+						<div className="trace" style={{ display: (entry.trace ? 'block' : 'none') }}>
+							<pre>{entry.trace}</pre>
+						</div>
+					</div>
+				);
+			}
+		}
+		// The array of filters
+		for (var i = 0; i < this.state.filters.length; i++) {
+			filter = this.state.filters[i];
+			filterElements.push(
+				<div className={'filter' + (filter.disabled ? ' disabled' : '')} key={i}>
+					<div className="label">{humanizeEntryField(filter.field)}</div>
+					<div className="value">{filter.value}</div>
+					<button className="delete-button" onClick={this.generateFilterDeleter(i)}><i className="fa fa-times"></i></button>
+					<button className="disable-button" onClick={this.generateFilterDisabler(i)}>
+						<i className={'fa fa-' + (filter.disabled ? 'check' : 'ban')}></i>
+					</button>
+				</div>
+			);
+		}
 
-            return (
-                <div id="livelog" style={{ opacity: this.state.ready ? 1.0 : 0.0 }}>
-					<div id="show-filters-button" className={this.state.filtersVisible ? 'hidden' : ''} onClick={this.onShowFilterClicked}><i className={'fa fa-filter'}></i></div>
-                    <div id="filters" className={classSet({
-							'create-new-filter': this.state.creatingNewFilter,
-							'hidden': !this.state.filtersVisible
-						})}>
-                        <div id="heading">
-                            <div className="left"><i className="fa fa-filter"></i> Filters</div>
-                            <div className="right">
-                                <button onClick={this.onHideFilterClicked} className="dark"><i className="fa fa-arrow-left"></i></button>
-                                <button onClick={this.onNewFilterClicked} className="blue"><i className={'fa fa-' + (this.state.creatingNewFilter ? 'times' : 'plus')}></i></button>
-                            </div>
-                        </div>
-                        <div id="filter-form">
-                            <Dropdown
-								map={{
-									level: 'Log Level',
-									deviceId: 'Device Id',
-									tag: 'Tag',
-									message: 'Message',
-									trace: 'Stack Trace',
-									ip: 'IP Address',
-									appName: 'Application',
-									appVersion: 'Version'
-								}}
-								nullable={false}
-								value={this.state.newFilterFieldName}
-								onChange={this.onNewFilterFieldNameChanged}
-								disabled={this.state.waiting} />
-                            <input type="text" className="filter-value" value={this.state.newFilterValue} placeholder="Filter Value" onChange={this.onNewFilterValueChanged} onKeyDown={this.onNewFilterValueKeyPress} />
-                            <button className="finish" onClick={this.onCreateFilterClicked}>Add Filter</button>
-                        </div>
-                        <div id="filter-list">
-                            <div className="empty-message" style={{ display: (this.state.filters.length > 0 ? 'none' : 'block') }}>There are no filters to show.</div>
-                            <div id="filter-list-wrapper" style={{ display: (this.state.filters.length > 0 ? 'block' : 'none') }}>
-                                {filterElements}
-                            </div>
-                        </div>
-                    </div>
-                    <div id="entries-container" className={this.state.filtersVisible ? '' : 'expanded'}>
-                        <div id="entries">
-                            <ReactCSSTransitionGroup transitionName="example">
-                                {entryElements}
-                            </ReactCSSTransitionGroup>
-                        </div>
-                    </div>
-                </div>
-            );
-        } else {
-            return (
-                <div id="livelog" style={{ opacity: this.state.ready ? 1.0 : 0.0 }}>
-                    <div className="empty-message">There are no entries to show yet.</div>
-                </div>
-            );
-        }
+		return (
+			<div id="livelog" style={{ opacity: this.state.ready ? 1.0 : 0.0 }}>
+				<div id="show-filters-button" className={this.state.filtersVisible ? 'hidden' : ''} onClick={this.onShowFilterClicked}><i className={'fa fa-filter'}></i></div>
+				<div id="filters" className={classSet({
+						'create-new-filter': this.state.creatingNewFilter,
+						'hidden': !this.state.filtersVisible
+					})}>
+					<div id="heading">
+						<div className="left"><i className="fa fa-filter"></i> Filters</div>
+						<div className="right">
+							<button onClick={this.onHideFilterClicked} className="dark"><i className="fa fa-arrow-left"></i></button>
+							<button onClick={this.onNewFilterClicked} className={this.state.creatingNewFilter ? 'red' : 'blue'}>
+								<i className={'fa fa-' + (this.state.creatingNewFilter ? 'times' : 'plus')}></i>
+							</button>
+						</div>
+					</div>
+					<div id="filter-form">
+						<Dropdown
+							map={{
+								level: 'Log Level',
+								deviceId: 'Device Id',
+								tag: 'Tag',
+								message: 'Message',
+								trace: 'Stack Trace',
+								ip: 'IP Address',
+								appName: 'Application',
+								appVersion: 'Version'
+							}}
+							nullable={false}
+							value={this.state.newFilterFieldName}
+							onChange={this.onNewFilterFieldNameChanged}
+							disabled={this.state.waiting} />
+						<input type="text" className="filter-value" value={this.state.newFilterValue} placeholder="Filter Value" onChange={this.onNewFilterValueChanged} onKeyDown={this.onNewFilterValueKeyPress} />
+						<button className="finish" onClick={this.onCreateFilterClicked}>Add Filter</button>
+					</div>
+					<div id="filter-list">
+						<div className="empty-message" style={{ display: (this.state.filters.length > 0 ? 'none' : 'block') }}>There are no filters to show.</div>
+						<div id="filter-list-wrapper" style={{ display: (this.state.filters.length > 0 ? 'block' : 'none') }}>
+							{filterElements}
+						</div>
+					</div>
+				</div>
+				<div id="entries-container" className={(this.state.filtersVisible ? '' : 'expanded') + (entryElements.length <= 0 ? ' hidden' : '')}>
+					<div id="entries">
+						{entryElements}
+					</div>
+				</div>
+				<div className={'empty-message' + (this.state.filtersVisible ? '' : ' expanded') + (entryElements.length <= 0 ? '' : ' hidden')}>There are no entries to show.</div>
+			</div>
+		);
     }
 });
 
